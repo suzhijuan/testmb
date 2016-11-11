@@ -13,13 +13,14 @@ class TestCase(unittest.TestCase, metaclass=DecoMeta):
         # desired_caps['platformVersion'] = '5.1.1'
         desired_caps['deviceName'] = 'whatever if only one'
         desired_caps['app'] = path(
-            './app-standard-debug-3.1.3.8.apk_3.1.3.8.apk'
+            './app-standard-debug-3.1.5.-17.apk_3.1.5.-17.apk'
         )
         desired_caps['appPackage'] = 'com.molihe.test'
         # 'com.movier.magicbox'
         # 'vmovier.com.activity'
         # desired_caps['appActivity'] = '.ContactManager'
         desired_caps['appActivity'] = 'com.vmovier.magicbox.main.MainActivity'
+        desired_caps['newCommandTimeout'] = 300
         desired_caps['noReset'] = True
         desired_caps['fullReset'] = False
         self.driver = webdriver.Remote(

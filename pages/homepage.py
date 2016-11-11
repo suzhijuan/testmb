@@ -1,7 +1,7 @@
 from .basepage import BasePage
 from appium.webdriver.webdriver import By
 from selenium.webdriver.support import expected_conditions as ec
-from . import openscreenpage, detailpage, sharepage
+from . import openscreenpage, detailpage, sharepage, recomendpage
 from enum import Enum
 
 
@@ -49,11 +49,14 @@ class HomePage(BasePage):
 
     TOAST_SHARE_SUCCESS = "分享成功"
 
+    NEW_VERSION_FOUND = (By.NAME, "发现新版本")
+    CANCEL_UPDATE = (By.NAME, "以后再说")
+
     def wait_loaded(self, timeout=10, poll_frequency=0.5):
         self.wait(timeout, poll_frequency).until(
             ec.presence_of_element_located(HomePage.TAB_HOME))
 
-    def skip(self):
+    def skip_openscreen(self):
         try:
             self.wait().until(ec.presence_of_element_located(
                 openscreenpage.OpenScreenPage.SKIP))
@@ -62,23 +65,45 @@ class HomePage(BasePage):
         except:
             pass
 
+    def skip_update(self):
+        try:
+            self.wait().until(ec.presence_of_element_located(
+                HomePage.NEW_VERSION_FOUND))
+            self.driver.find_element(
+                *HomePage.CANCEL_UPDATE).click()
+        except:
+            pass
+
+    def skip(self):
+        self.skip_openscreen()
+        self.skip_update()
+
+    def cancel_update(self):
+        try:
+            self.driver.find_element(*HomePage.NEW_VERSION_FOUND)
+            self.driver.find_element(HomePage.CANCEL_UPDATE).click()
+        except:
+            pass
+
     def card_state(self):
         pass
 
     def ready(self):
         self.skip()
+        self.cancel_update()
         self.wait_loaded()
         return self
 
     def click_share(self):
         self.driver.find_element(*HomePage.SHARE).click()
-        return sharepage.SharePage(self.driver)
+        return self
 
     def to_sharepage(self):
         # print(pages.openscreenpage.OpenScreenPage.SKIP)
         self.skip()
         self.wait_loaded()
-        return self.click_share()
+        self.click_share()
+        return sharepage.SharePage(self.driver)
 
     def click_like(self):
         self.driver.find_element(*HomePage.LIKE).click()
@@ -86,6 +111,10 @@ class HomePage(BasePage):
 
     def like_count(self):
         return int(self.driver.find_element(*HomePage.LIKE_COUNT).text)
+
+    def click_find(self):
+        self.driver.find_element(*HomePage.TAB_FIND).click()
+        return self
 
     def play(self):
         self.driver.find_element(*HomePage.VIDEO_PLAY).click()
@@ -99,3 +128,6 @@ class HomePage(BasePage):
         self.driver.find_element(*HomePage.VIDEO_DELETE).click()
         return self
 
+    def to_recomendpage(self):
+        self.ready().click_find()
+        return recomendpage.RecomendPage(self.driver)

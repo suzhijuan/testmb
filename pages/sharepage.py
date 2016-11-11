@@ -17,8 +17,8 @@ class SharePage(BasePage):
     QQ_SEND = (By.NAME, "发送")
     QQ_BACK = (By.NAME, "返回魔力盒")
 
-    def wait_loaded(self):
-        pass
+    def ready(self):
+        return self
 
     def weibo_share(self):
         self.driver.find_element(*SharePage.SHARE_WEIBO).click()
